@@ -1,0 +1,700 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/like.png">
+  <link rel="icon" href="/img/like.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="闭包是什么？函数 + 函数内部跨作用域访问的变量 执行环境 和 变量对象 和 作用域链标识符：变量名，函数名，形参，对象属性名 执行环境：代码的运行环境。 js 分为两种执行环境：全局执行环境和函数（局部）执行环境 作用域：标识符可被访问的范围。就是指当前函数内部以及其后代内部 作用域链：规定了标识符的访问规则，让标识符的访问变得有序。查找规则：从内到外一层层的向外查找，找到了就使用，并中止查找。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于js的一些重点整理">
+<meta property="og:url" content="http://example.com/2023/05/25/emphasis/index.html">
+<meta property="og:site_name" content="fcous">
+<meta property="og:description" content="闭包是什么？函数 + 函数内部跨作用域访问的变量 执行环境 和 变量对象 和 作用域链标识符：变量名，函数名，形参，对象属性名 执行环境：代码的运行环境。 js 分为两种执行环境：全局执行环境和函数（局部）执行环境 作用域：标识符可被访问的范围。就是指当前函数内部以及其后代内部 作用域链：规定了标识符的访问规则，让标识符的访问变得有序。查找规则：从内到外一层层的向外查找，找到了就使用，并中止查找。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-05-25T09:52:15.000Z">
+<meta property="article:modified_time" content="2023-05-25T09:53:54.808Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="JS">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>关于js的一些重点整理 - fcous</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>fcous Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="关于js的一些重点整理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-05-25 17:52" pubdate>
+          2023年5月25日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          85 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">关于js的一些重点整理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="闭包是什么？"><a href="#闭包是什么？" class="headerlink" title="闭包是什么？"></a>闭包是什么？</h3><p>函数 + 函数内部跨作用域访问的变量</p>
+<h3 id="执行环境-和-变量对象-和-作用域链"><a href="#执行环境-和-变量对象-和-作用域链" class="headerlink" title="执行环境 和 变量对象 和 作用域链"></a>执行环境 和 变量对象 和 作用域链</h3><p>标识符：变量名，函数名，形参，对象属性名</p>
+<p>执行环境：代码的运行环境。 js 分为两种执行环境：全局执行环境和函数（局部）执行环境</p>
+<p>作用域：标识符可被访问的范围。就是指当前函数内部以及其后代内部</p>
+<p>作用域链：规定了标识符的访问规则，让标识符的访问变得有序。查找规则：从内到外一层层的向外查找，找到了就使用，并中止查找。如果直到在 window 对象也没找到，就会报错</p>
+<p>注意：全局执行环境默认一直存在于栈中，随着代码的运行，函数执行环境会依次入栈出栈</p>
+<p>面试题</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs javascript">&lt;script&gt;<br>     <span class="hljs-keyword">var</span> num = <span class="hljs-number">30</span><br>     <span class="hljs-keyword">function</span> <span class="hljs-title function_">f1</span>(<span class="hljs-params"></span>) &#123;<br>         <span class="hljs-keyword">var</span> num = <span class="hljs-number">20</span><br>         <span class="hljs-keyword">function</span> <span class="hljs-title function_">f2</span>(<span class="hljs-params"></span>) &#123;<br>             <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(num);<br>         &#125;<br>         <span class="hljs-keyword">function</span> <span class="hljs-title function_">f3</span>(<span class="hljs-params"></span>) &#123;<br>             <span class="hljs-keyword">var</span> num = <span class="hljs-number">10</span><br>             <span class="hljs-title function_">f2</span>()<br>         &#125;<br>         <span class="hljs-title function_">f3</span>()<br>     &#125;<br>     <span class="hljs-title function_">f1</span>()<br> &lt;/script&gt;<br></code></pre></td></tr></table></figure>
+
+<h3 id="ES6-如何接收实参"><a href="#ES6-如何接收实参" class="headerlink" title="ES6 如何接收实参"></a>ES6 如何接收实参</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs javascript">&lt;script&gt;<br>      <span class="hljs-comment">//es6如何接收参数</span><br>      <span class="hljs-keyword">function</span> <span class="hljs-title function_">fn</span>(<span class="hljs-params">...arg</span>)&#123;<br>          <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(arg);<br>      &#125;<br>      <span class="hljs-title function_">fn</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)<br>&lt;/script&gt;<br></code></pre></td></tr></table></figure>
+
+<h3 id="创建构造函数"><a href="#创建构造函数" class="headerlink" title="创建构造函数"></a>创建构造函数</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">//构造函数特点</span><br><span class="hljs-comment">//function声明</span><br><span class="hljs-comment">//首字母大写  将参数挂载带this上 通过new调用</span><br><span class="hljs-comment">//没有返回值</span><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">Person</span>(<span class="hljs-params"></span>)&#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">usname</span>=usname;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">sex</span>=sex;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">hobby</span>=hobby;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">skill</span>=<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)&#123;<br>		<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;walk&#x27;</span>)<br>    &#125;<br>&#125;<br><span class="hljs-keyword">let</span> lp = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&#x27;ll&#x27;</span>,<span class="hljs-string">&#x27;男&#x27;</span>，<span class="hljs-string">&#x27;敲代码&#x27;</span>)<br></code></pre></td></tr></table></figure>
+
+<h3 id="面试题：new-这个关键字在实例化对象的过程中做了什么？【高频】"><a href="#面试题：new-这个关键字在实例化对象的过程中做了什么？【高频】" class="headerlink" title="面试题：new 这个关键字在实例化对象的过程中做了什么？【高频】"></a>面试题：new 这个关键字在实例化对象的过程中做了什么？【高频】</h3><p>1.创建一个空对象</p>
+<p>2.将 this 指向这个空对象</p>
+<p>3.执行构造函数里面的代码（赋值操作）</p>
+<p>4.自动返回这个新对象</p>
+<h3 id="原型-【重点】"><a href="#原型-【重点】" class="headerlink" title="原型 【重点】"></a>原型 【重点】</h3><p>特点：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-number">1.</span>每一个函数（特指构造函数）都会有一个属性prototype,这个属性就叫做原型（显示原型）。它是一个对象，也叫原型对象<br><br><span class="hljs-number">2.</span>每一对象，都会有一个属性__proto__，(新浏览器中写在[[prototype]]),这个属性叫做隐式原型。它指向对应的构造函数的原型对象prototype。<br><span class="hljs-number">3.</span>每一个原型对象prototype身上都会有一个constructor，它指向构造函数身。<br></code></pre></td></tr></table></figure>
+
+<p>作用：共享方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs javascript">所有绑定到原型对象身上的方法可以被所有实例对象共享<br><br>注意：实例对象之所以可以使用构造函数原型对象上的方法，是因为实例对象的__proto__指向了构造函数的原型对象prototype<br></code></pre></td></tr></table></figure>
+
+<h3 id="原型链【重点】"><a href="#原型链【重点】" class="headerlink" title="原型链【重点】"></a>原型链【重点】</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs javascript">特点：<br><span class="hljs-number">1.</span>原型对象也是一个对象，所以他身上也有__proto__这个属性。这个属性会指向<span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span><br><span class="hljs-number">2.</span><span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>也是一个对象，所以它身上也会有__proto__这个属性。 这个属性会指向<span class="hljs-literal">null</span>。<br>作用：<br>共享方法<br>注意：最好不要在<span class="hljs-title class_">Object</span>.<span class="hljs-property">protype</span>上面挂载方法，因为会被所有实例对象共享。<br>原型链查找方法：<br>先自身查找方法，如果找到就执行，否则沿着原型链往上查找，直到找到执行。如果<span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>上没有找到就会报错。<br></code></pre></td></tr></table></figure>
+
+<h3 id="this-的指向"><a href="#this-的指向" class="headerlink" title="this 的指向"></a>this 的指向</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 1. 全局中的this: 指向window</span><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>); <span class="hljs-comment">// window</span><br><br><span class="hljs-comment">// 2. 一般函数中的this: 谁调用 this指向谁</span><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">fn</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);<br>&#125;<br><span class="hljs-variable language_">window</span>.<span class="hljs-title function_">fn</span>();<br><br><span class="hljs-comment">// 3. 对象中的this: 谁调用 this指向谁</span><br><span class="hljs-keyword">let</span> obj = &#123;<br>  <span class="hljs-attr">skill</span>: <span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);<br>  &#125;,<br>&#125;;<br><span class="hljs-comment">// obj.skill();</span><br><span class="hljs-keyword">let</span> r = obj.<span class="hljs-property">skill</span>;<br><span class="hljs-title function_">r</span>();<br><br><span class="hljs-comment">// 4. 定时器中的this: 指向window对象</span><br><span class="hljs-variable language_">window</span>.<span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);<br>&#125;, <span class="hljs-number">0</span>);<br><br><span class="hljs-comment">// 5. 事件函数中的this: 事件的绑定者</span><br><span class="hljs-variable language_">document</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&quot;click&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);<br>&#125;);<br><br><span class="hljs-comment">// 6. 构造函数中的this: 指向new出来的实例对象</span><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">Person</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);<br>&#125;<br><br><span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>();<br><br><span class="hljs-comment">// 7. ***箭头函数中的this: 指向函数声明时的作用域***</span><br><span class="hljs-variable language_">document</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&quot;click&quot;</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<h3 id="深-浅-拷-贝"><a href="#深-浅-拷-贝" class="headerlink" title="深 浅 拷 贝"></a>深 浅 拷 贝</h3><ul>
+<li><p>深拷贝：无限层级的拷贝（有多少层拷多少层，永远拷贝的都是值）</p>
+</li>
+<li><p>浅拷贝：只考一层，遇到基本数据类型，拷值，遇到引用数据类型，考地址</p>
+</li>
+<li><p>4 种拷贝的方式</p>
+<ol>
+<li>for-in 拷贝 1 层，浅拷贝</li>
+<li>Object.assign() 浅拷贝</li>
+<li>JSON 方法，深拷贝，缺陷：不能拷贝对象的方法</li>
+<li>完美深拷贝。Lodash 工具库 _.cloneDeep() 深拷贝，可以拷贝函数</li>
+</ol>
+<p>深拷贝：特点，新旧对象互不影响 浅拷贝：特点，拷贝后，基本数据类型的属性，不影响，引用数据类型，因为拷贝的是地址，所以会互相影响</p>
+</li>
+</ul>
+<h3 id="变量类型检测"><a href="#变量类型检测" class="headerlink" title="变量类型检测"></a>变量类型检测</h3><h4 id="typeof"><a href="#typeof" class="headerlink" title="typeof"></a>typeof</h4><p>检测基本数据类型准确，特例，<code>typeof null === &#39;object&#39;</code></p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs actionscript"><span class="hljs-keyword">typeof</span> <span class="hljs-keyword">function</span><span class="hljs-params">()</span> &#123;&#125; === <span class="hljs-string">&#x27;function&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="instanceof"><a href="#instanceof" class="headerlink" title="instanceof"></a>instanceof</h4><p>语法：变量（实例）instanceof 构造函数 原理：判断 构造函数的原型 是否在 实例的原型链上</p>
+<h4 id="Array-isArray-静态方法"><a href="#Array-isArray-静态方法" class="headerlink" title="Array.isArray - 静态方法"></a>Array.isArray - 静态方法</h4><p>Object.assign</p>
+<p>专门用来判断数组类型：<code>log(Array.isArray([])); // true</code></p>
+<h4 id="Object-prototype-toString-call"><a href="#Object-prototype-toString-call" class="headerlink" title="Object.prototype.toString.call"></a>Object.prototype.toString.call</h4><p>最准确</p>
+<p>Object.prototype.toString.call() 是把数据的类型信息以字符串显示，格式 ‘[object Type]’</p>
+<h3 id="解构赋值"><a href="#解构赋值" class="headerlink" title="解构赋值"></a>解构赋值</h3><p>概念：解构赋值的最大前提是——结构映射，变量所处的结构和目标数据的结构一模一样</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 解构数组</span><br>   <span class="hljs-keyword">let</span> [num1, num2, num3] = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]<br>   <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(num1, num2, num3)<br><br>   <span class="hljs-comment">// 解构数组时，如果要跳过成员解构，可以使用空白加逗号的方式</span><br>   <span class="hljs-keyword">let</span> [, , , str] = [<span class="hljs-string">&#x27;a&#x27;</span>, <span class="hljs-string">&#x27;b&#x27;</span>, <span class="hljs-string">&#x27;c&#x27;</span>, <span class="hljs-string">&#x27;d&#x27;</span>]<br>   <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(str)<br><br>   <span class="hljs-comment">// 解构对象</span><br>   <span class="hljs-keyword">let</span> &#123; <span class="hljs-attr">name</span>: stuName, <span class="hljs-attr">age</span>: stuAge &#125; = &#123; <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;张三&#x27;</span>, <span class="hljs-attr">age</span>: <span class="hljs-number">20</span> &#125;<br>   <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(stuName, stuAge)<br>对象简写——<span class="hljs-title class_">ES6</span>规定：<br>           - 如果变量的名字和key名一致，则只需要写一个即可<br>           - 对象中的函数可以无需<span class="hljs-keyword">function</span>关键词，只用【方法名+()+&#123;&#125;】即可<br>   */<br>   <span class="hljs-comment">// 基于对象简写语法，上面的解构可以再变一次</span><br>   <span class="hljs-keyword">let</span> &#123; name, age &#125; = &#123; <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;李四&#x27;</span>, <span class="hljs-attr">age</span>: <span class="hljs-number">30</span> &#125;<br>   <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(name, age)<br></code></pre></td></tr></table></figure>
+
+<h3 id="展开运算符"><a href="#展开运算符" class="headerlink" title="展开运算符"></a>展开运算符</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">/* </span><br><span class="hljs-comment">        扩展运算符特性：</span><br><span class="hljs-comment">            - 可以展开字符串</span><br><span class="hljs-comment">            - 可以展开数组</span><br><span class="hljs-comment">            - 可以展开对象</span><br><span class="hljs-comment">                - 只能对象内展开另一个对象</span><br><span class="hljs-comment">    */</span><br>&#123;<br>  <span class="hljs-comment">// 展开字符串</span><br>  <span class="hljs-keyword">let</span> str = <span class="hljs-string">&quot;hello world&quot;</span>;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(...str);<br>  <span class="hljs-comment">// 展开数组</span><br>  <span class="hljs-keyword">const</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>];<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(...arr);<br>  <span class="hljs-comment">// 展开对象</span><br>  <span class="hljs-keyword">const</span> obj = &#123;<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;张三&quot;</span>,<br>    <span class="hljs-attr">age</span>: <span class="hljs-number">20</span>,<br>  &#125;;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(&#123; ...obj &#125;);<br>&#125;<br><span class="hljs-comment">// 浅拷贝</span><br><span class="hljs-keyword">const</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>];<br><span class="hljs-keyword">const</span> newArr = [...arr];<br>newArr.<span class="hljs-title function_">push</span>(<span class="hljs-number">4</span>);<br><span class="hljs-comment">// console.log(arr)</span><br><br><span class="hljs-comment">// 合并数组</span><br><span class="hljs-keyword">const</span> strs = [<span class="hljs-string">&quot;a&quot;</span>, <span class="hljs-string">&quot;b&quot;</span>, <span class="hljs-string">&quot;c&quot;</span>, <span class="hljs-string">&quot;d&quot;</span>];<br><span class="hljs-keyword">const</span> nums = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>];<br><span class="hljs-keyword">const</span> multTypes = [...strs, ...nums];<br><span class="hljs-comment">// console.log(multTypes)</span><br><br><span class="hljs-comment">// 浅拷贝对象</span><br><span class="hljs-comment">// 合并对象——两个对象内还有相同属性哦——注意观察</span><br><span class="hljs-comment">// 拿概念来套！</span><br><span class="hljs-keyword">const</span> stu = &#123;<br>  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;张三&quot;</span>,<br>  <span class="hljs-attr">age</span>: <span class="hljs-number">20</span>,<br>  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;李四&quot;</span>,<br>&#125;;<br><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(stu);<br><br><span class="hljs-keyword">const</span> teacher = &#123;<br>  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;老谢&quot;</span>,<br>  <span class="hljs-attr">age</span>: <span class="hljs-number">31</span>,<br>  <span class="hljs-attr">address</span>: <span class="hljs-string">&quot;重庆市渝北区人和大道&quot;</span>,<br>&#125;;<br><span class="hljs-comment">// 对象拷贝</span><br><span class="hljs-keyword">const</span> newStu = &#123; ...stu &#125;;<br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(newStu === stu);<br><span class="hljs-comment">// 对象合并</span><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(&#123; ...stu, ...teacher &#125;); <span class="hljs-comment">//</span><br><span class="hljs-comment">// 拷贝对象</span><br><span class="hljs-comment">// const otherStu = Object.assign(&#123; address: &#x27;天府大道&#x27; &#125;, stu)</span><br><span class="hljs-comment">// console.log(otherStu === stu)   //&#123;name,age,address&#125; === &#123;name,age&#125; false</span><br><span class="hljs-comment">/*</span><br><span class="hljs-comment">        上述代码牵涉两个概念：</span><br><span class="hljs-comment">            - Object.assign()的作用</span><br><span class="hljs-comment">                - 将所有可枚举属性从一个或多个源对象分配到目标对象上，【并返回目标对象本身！】</span><br><span class="hljs-comment">            - JavaScript对比引用数据的时候，只会对比地址</span><br><span class="hljs-comment">    */</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="对象简写"><a href="#对象简写" class="headerlink" title="对象简写"></a>对象简写</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs javascript">*<br>        概念：<br>            - <span class="hljs-title class_">ES6</span>规定，在对象中key名和变量名一致的时候，可以只写一个<br>            - <span class="hljs-title class_">ES6</span>规定，在对象中方法可以不需要<span class="hljs-keyword">function</span>关键词，只需要【方法名+()+&#123;&#125;】即可<br>    */<br><br><br><br>    <span class="hljs-comment">// 1.场景1——key名和变量名一致</span><br>    <span class="hljs-keyword">let</span> stuName = <span class="hljs-string">&#x27;张三&#x27;</span><br>    <span class="hljs-keyword">const</span> stuInfo = &#123;<br>        stuName,<br>        <span class="hljs-attr">age</span>: <span class="hljs-number">20</span><br>    &#125;<br><br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(stuInfo)<br><br>    <span class="hljs-comment">// 2.场景2——方法简写</span><br>    <span class="hljs-keyword">const</span> teacher = &#123;<br>        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;老谢&#x27;</span>,<br>        <span class="hljs-title function_">getName</span>(<span class="hljs-params"></span>) &#123;<br>            <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>)<br>        &#125;<br>    &#125;<br><br>    teacher.<span class="hljs-title function_">getName</span>()<br></code></pre></td></tr></table></figure>
+
+<h3 id="class-类"><a href="#class-类" class="headerlink" title="class 类"></a>class 类</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">/* ************class类——初印象**************** */</span><br><span class="hljs-comment">// 概念：class类是构造函数的语法糖</span><br><br><span class="hljs-comment">/* ************class类——api语法**************** */</span><br><span class="hljs-comment">/*</span><br><span class="hljs-comment">        class语法特征：</span><br><span class="hljs-comment">            - class关键字声明类</span><br><span class="hljs-comment">            - 类名</span><br><span class="hljs-comment">            - &#123;&#125;</span><br><span class="hljs-comment">        使用class类</span><br><span class="hljs-comment">            - new ClassName()</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">        class实例属性设置：</span><br><span class="hljs-comment">            - 基本属性</span><br><span class="hljs-comment">                - 声明后默认赋值，无法通过new的同时动态赋值</span><br><span class="hljs-comment">                - 语法：属性名 = 属性值</span><br><span class="hljs-comment">            - 构造属性</span><br><span class="hljs-comment">                - 在用户new创造实例的时候动态赋值</span><br><span class="hljs-comment">                - 语法：在constructor方法内定义，语法和构造函数完全一致</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">        class的constructor方法：</span><br><span class="hljs-comment">            - 概念：constructor是class类的构造器</span><br><span class="hljs-comment">            - 特性：</span><br><span class="hljs-comment">                - 所有构造属性都在constructor内定义</span><br><span class="hljs-comment">                - constructor是非必写的，如果没写则js编译时会自动补充</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">        class类的方法：</span><br><span class="hljs-comment">            - 概念：类似于构造函数的原型方法</span><br><span class="hljs-comment">            - 语法：方法名+()+&#123;&#125;</span><br><span class="hljs-comment">            - 特性：class类的原型方法在使用时，必须显式指明this指向</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">        class类的继承</span><br><span class="hljs-comment">            - 概念：</span><br><span class="hljs-comment">                - 类使用extends关键字实现继承</span><br><span class="hljs-comment">                    - 语法：class 子类 extends 父类 &#123;  &#125;</span><br><span class="hljs-comment">            - 特性：</span><br><span class="hljs-comment">                - 1. 继承的子类天生不具备this，子类的this是通过constructor中调用super得到父类的this的</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">        class类静态方法</span><br><span class="hljs-comment">            - 概念：只能被class类本身访问的方法</span><br><span class="hljs-comment">            - 语法：在方法名前面使用static关键词修饰</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">            </span><br><span class="hljs-comment">    */</span><br><span class="hljs-keyword">var</span> name = <span class="hljs-string">&quot;老王&quot;</span>;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Stu</span> &#123;<br>  schoolName = <span class="hljs-string">&quot;源码时代&quot;</span>;<br>  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">name, age</span>) &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">age</span> = age;<br>  &#125;<br><br>  <span class="hljs-comment">// 定义getName方法用于获取学生姓名</span><br>  <span class="hljs-title function_">getName</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>);<br>  &#125;<br><br>  <span class="hljs-comment">// 定义静态方法</span><br>  <span class="hljs-keyword">static</span> <span class="hljs-title function_">saySth</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;CV大法好啊，放屁&quot;</span>);<br>  &#125;<br>&#125;<br><br><span class="hljs-keyword">const</span> stu = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Stu</span>(<span class="hljs-string">&quot;张三&quot;</span>, <span class="hljs-number">20</span>);<br><span class="hljs-comment">// stu.saySth() // 实例无法调用静态方法</span><br><span class="hljs-comment">// 一般静态方法都作为当前类的公共工具方法使用，比如Object.keys专门处理所有对象的key</span><br><span class="hljs-title class_">Stu</span>.<span class="hljs-title function_">saySth</span>();<br><br><span class="hljs-comment">// 继承Stu</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">StuInfo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">Stu</span> &#123;<br>  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">name, age</span>) &#123;<br>    <span class="hljs-comment">// 子类想要获得this，必须先调用super</span><br>    <span class="hljs-variable language_">super</span>(name, age); <span class="hljs-comment">// 此处super扮演的角色是——父类的constructor</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">score</span> = <span class="hljs-number">100</span>;<br>  &#125;<br>&#125;<br><br><span class="hljs-comment">// console.log(new StuInfo(&#x27;张三&#x27;, 20))</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="Promise"><a href="#Promise" class="headerlink" title="Promise"></a>Promise</h1><h4 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">/* </span><br><span class="hljs-comment">        Promise可以用于队列化处理异步</span><br><span class="hljs-comment">        </span><br><span class="hljs-comment">        Promise基本语法：</span><br><span class="hljs-comment">            - new Promise</span><br><span class="hljs-comment">            - 接收一个回调函数</span><br><span class="hljs-comment">            - 回调函数有两个参数：</span><br><span class="hljs-comment">                - resolve</span><br><span class="hljs-comment">                - reject</span><br><span class="hljs-comment">    */</span><br><span class="hljs-keyword">const</span> p = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> &#123;&#125;);<br></code></pre></td></tr></table></figure>
+
+<h4 id="Promise-状态"><a href="#Promise-状态" class="headerlink" title="Promise 状态"></a>Promise 状态</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">/* </span><br><span class="hljs-comment">        Promise对异步的处理全靠状态的改变</span><br><span class="hljs-comment">        Promise本身有三个状态：</span><br><span class="hljs-comment">            - pending 等待状态</span><br><span class="hljs-comment">                - 等待Promise回调内决定最终的状态</span><br><span class="hljs-comment">            - fulfilled 完成，成功状态</span><br><span class="hljs-comment">                - 代表当前Promise内部成功解决了某些问题</span><br><span class="hljs-comment">            - reject 失败状态&#x27;;;&#x27;</span><br><span class="hljs-comment">        Promise的状态流转只有两条路：</span><br><span class="hljs-comment">            - pending到fulfilled</span><br><span class="hljs-comment">            - pending到rejected</span><br><span class="hljs-comment">    */</span><br><span class="hljs-keyword">const</span> p = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> &#123;<br>  <span class="hljs-title function_">resolve</span>();<br>  <span class="hljs-title function_">reject</span>();<br>&#125;);<br><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(p);<br></code></pre></td></tr></table></figure>
+
+<h4 id="Promise-状态结果"><a href="#Promise-状态结果" class="headerlink" title="Promise 状态结果"></a>Promise 状态结果</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs javascript">&#123;<br>  <span class="hljs-comment">//成功状态</span><br>  <span class="hljs-keyword">const</span> p = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> &#123;<br>    <span class="hljs-title function_">resolve</span>(<span class="hljs-string">&quot;成功&quot;</span>);<br>  &#125;);<br><br>  p.<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>  &#125;);<br>&#125;<br><br>&#123;<br>  <span class="hljs-comment">//失败状态</span><br>  <span class="hljs-keyword">const</span> p = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> &#123;<br>    <span class="hljs-title function_">reject</span>(<span class="hljs-string">&quot;失败&quot;</span>);<br>  &#125;);<br><br>  p.<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(err);<br>  &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Promise-的状态和回调的关系："><a href="#Promise-的状态和回调的关系：" class="headerlink" title="Promise 的状态和回调的关系："></a>Promise 的状态和回调的关系：</h4><p>Promise 内部一旦 resolve，则 then 内部回调立即调用<br>Promise 内部一旦 reject，则 catch 内部回调立即调用</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> p = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> &#123;<br>  <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">resolve</span>(<span class="hljs-number">1</span>), <span class="hljs-number">2000</span>);<br>&#125;);<br><br><span class="hljs-comment">// console.log(p)</span><br>p.<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>  <span class="hljs-comment">// 此处的回调必须是promise内部resolve调用后才调用</span><br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<h4 id="Promise-封装最基本的原则：将整个异步过程放到-Promise-内，通过-resolve-或者-reject-对外发送结果值"><a href="#Promise-封装最基本的原则：将整个异步过程放到-Promise-内，通过-resolve-或者-reject-对外发送结果值" class="headerlink" title="Promise 封装最基本的原则：将整个异步过程放到 Promise 内，通过 resolve 或者 reject 对外发送结果值:"></a>Promise 封装最基本的原则：将整个异步过程放到 Promise 内，通过 resolve 或者 reject 对外发送结果值:</h4><p>例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">doCalc</span>(<span class="hljs-params">num</span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> &#123;<br>    <span class="hljs-comment">// 模拟服务器处理过程</span><br>    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>      num++; <span class="hljs-comment">// 处理完成num</span><br>      <span class="hljs-title function_">resolve</span>(num);<br>    &#125;, <span class="hljs-number">500</span>);<br>  &#125;);<br>&#125;<br><br><span class="hljs-title function_">doCalc</span>(<span class="hljs-number">0</span>)<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">doCalc</span>(res);<br>  &#125;)<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">doCalc</span>(res);<br>  &#125;)<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">doCalc</span>(res);<br>  &#125;)<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">doCalc</span>(res);<br>  &#125;)<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">doCalc</span>(res);<br>  &#125;)<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">doCalc</span>(res);<br>  &#125;)<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">doCalc</span>(res);<br>  &#125;)<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">doCalc</span>(res);<br>  &#125;)<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">doCalc</span>(res);<br>  &#125;)<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">doCalc</span>(res);<br>  &#125;)<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res);<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">doCalc</span>(res);<br>  &#125;);<br></code></pre></td></tr></table></figure>
+
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3><h3 id="async"><a href="#async" class="headerlink" title="async:"></a>async:</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs javascript">		概念：<br>		- 概念：<br>                - <span class="hljs-keyword">async</span>用于修饰函数<br>                - <span class="hljs-keyword">async</span>修饰的函数，调用后返回一个promise实例<br>                - <span class="hljs-keyword">async</span>修饰的函数内，<span class="hljs-keyword">return</span>数据的情况和then回调内<span class="hljs-keyword">return</span>的体现一致<br>        - 语法：<span class="hljs-keyword">async</span> 函数体<br>        - 语义：告知当前函数体内有异步操作<br><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">doSth</span>(<span class="hljs-params"></span>) &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>    <span class="hljs-comment">// 此处return的数据会作为返回的promise成功结果值</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> &#123;<br>            <span class="hljs-title function_">resolve</span>(<span class="hljs-number">1</span>)<br>        &#125;)<br>    &#125;<br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">doSth</span>())<br></code></pre></td></tr></table></figure>
+
+<p>​</p>
+<h3 id="await"><a href="#await" class="headerlink" title="await:"></a>await:</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">await</span>：<br>            - 概念：<span class="hljs-keyword">await</span>主要用于修饰promise，且<span class="hljs-keyword">await</span>必须在<span class="hljs-keyword">async</span>修饰的函数内使用<br>            - 作用：<br>                - <span class="hljs-keyword">await</span>修饰promise时，后续代码必须等到当前promise状态确定后才能执行<br>                - <span class="hljs-keyword">await</span>可以获得promise的成功结果值<br><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">dealPromise</span>(<span class="hljs-params"></span>) &#123;<br>        <span class="hljs-keyword">let</span> res = <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> &#123;<br>            <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>                <span class="hljs-title function_">resolve</span>(<span class="hljs-number">1</span>)<br>                <span class="hljs-comment">// console.log(1)</span><br>            &#125;, <span class="hljs-number">1000</span>)<br>        &#125;)<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res)<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-number">2</span>)<br>    &#125;<br><br>    <span class="hljs-title function_">dealPromise</span>()<br></code></pre></td></tr></table></figure>
+
+<p>&#x2F;<strong>**</strong>***<strong>**<strong>基于 async 和 await 来解决回调地狱问题</strong></strong>**<strong><strong>*</strong></strong>******&#x2F;</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">doCalc</span>(<span class="hljs-params">num</span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> &#123;<br>    <span class="hljs-comment">// 模拟服务器处理过程</span><br>    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>      num++; <span class="hljs-comment">// 处理完成num</span><br>      <span class="hljs-title function_">resolve</span>(num);<br>    &#125;, <span class="hljs-number">500</span>);<br>  &#125;);<br>&#125;<br><br><span class="hljs-comment">// dealCalc()</span><br><br><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">dealCalc</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">let</span> res1 = <span class="hljs-keyword">await</span> <span class="hljs-title function_">doCalc</span>(<span class="hljs-number">0</span>);<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res1);<br><br>  <span class="hljs-keyword">let</span> res2 = <span class="hljs-keyword">await</span> <span class="hljs-title function_">doCalc</span>(res1);<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res2);<br><br>  <span class="hljs-keyword">let</span> res3 = <span class="hljs-keyword">await</span> <span class="hljs-title function_">doCalc</span>(res2);<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res3);<br><br>  <span class="hljs-keyword">let</span> res4 = <span class="hljs-keyword">await</span> <span class="hljs-title function_">doCalc</span>(res3);<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res4);<br><br>  <span class="hljs-keyword">let</span> res5 = <span class="hljs-keyword">await</span> <span class="hljs-title function_">doCalc</span>(res4);<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res5);<br><br>  <span class="hljs-keyword">let</span> res6 = <span class="hljs-keyword">await</span> <span class="hljs-title function_">doCalc</span>(res5);<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res6);<br><br>  <span class="hljs-keyword">let</span> res7 = <span class="hljs-keyword">await</span> <span class="hljs-title function_">doCalc</span>(res6);<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res7);<br><br>  <span class="hljs-keyword">let</span> res8 = <span class="hljs-keyword">await</span> <span class="hljs-title function_">doCalc</span>(res7);<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res8);<br><br>  <span class="hljs-keyword">let</span> res9 = <span class="hljs-keyword">await</span> <span class="hljs-title function_">doCalc</span>(res8);<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res9);<br><br>  <span class="hljs-keyword">let</span> res10 = <span class="hljs-keyword">await</span> <span class="hljs-title function_">doCalc</span>(res9);<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res10);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>&#x2F;<strong>**</strong>***<strong>**<strong>async 和 await 的正确使用姿势</strong></strong>**<strong><strong>*</strong></strong>******&#x2F;</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">/* </span><br><span class="hljs-comment">        一般await修饰promise的时候都会结合try...catch()&#123;&#125;语法来使用</span><br><span class="hljs-comment">        try...catch()&#123;&#125;语法是专门用于捕获代码块错误的</span><br><span class="hljs-comment">    */</span><br><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">dealSth</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-keyword">let</span> res = <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> &#123;<br>      <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>        <span class="hljs-title function_">reject</span>(<span class="hljs-string">&quot;失败了&quot;</span>);<br>      &#125;, <span class="hljs-number">1000</span>);<br>    &#125;);<br>  &#125; <span class="hljs-keyword">catch</span> (err) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(err);<br>  &#125;<br><br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-number">2</span>);<br>&#125;<br><br><span class="hljs-title function_">dealSth</span>();<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/JS/">#JS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>关于js的一些重点整理</div>
+      <div>http://example.com/2023/05/25/emphasis/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年5月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/05/25/tips/" title="项目中遇到的亿点点问题....">
+                        <span class="hidden-mobile">项目中遇到的亿点点问题....</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
